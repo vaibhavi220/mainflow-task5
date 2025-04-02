@@ -1,97 +1,188 @@
-// Function to create and append the login form
-function createLoginForm() {
-    // Get the container where the form will be appended
-    const formContainer = document.getElementById('form-container');
+let products = [];
+let currentBill = {
+    transactionId: '',
+    date: '',
+    paymentMethod: 'Cash'
+};
 
-    // Create form element
-    const form = document.createElement('form');
-    form.setAttribute('id', 'loginForm');
+// Generate unique transaction ID
+function generateTransactionId() {
+    return 'TRX-' + Date.now().toString(36).toUpperCase();
+}
 
-    // Create heading
-    const heading = document.createElement('h2');
-    heading.textContent = 'Login';
-    form.appendChild(heading);
+// Add product to list
+function addProduct() {
+    const product = {
+        name: document.getElementById('productName').value,
+        quantity: parseInt(document.getElementById('productQty').value),
+        price: parseFloat(document.getElementById('productPrice').value)
+    };
 
-    // Create email label
-    const emailLabel = document.createElement('label');
-    emailLabel.setAttribute('for', 'email');
-    emailLabel.textContent = 'Email:';
-    form.appendChild(emailLabel);
+    if (product.name && product.quantity && product.price) {
+        products.push(product);
+        updateProductTable();
+        clearProductInputs();
+    }
+}
 
-    // Create email input field
-    const emailInput = document.createElement('input');
-    emailInput.setAttribute('type', 'email');
-    emailInput.setAttribute('id', 'email');
-    emailInput.setAttribute('required', true);
-    emailInput.setAttribute('placeholder', 'Enter your email');
-    form.appendChild(emailInput);
-
-    // Create password label
-    const passwordLabel = document.createElement('label');
-    passwordLabel.setAttribute('for', 'password');
-    passwordLabel.textContent = 'Password:';
-    form.appendChild(passwordLabel);
-
-    // Create password input field
-    const passwordInput = document.createElement('input');
-    passwordInput.setAttribute('type', 'password');
-    passwordInput.setAttribute('id', 'password');
-    passwordInput.setAttribute('required', true);
-    passwordInput.setAttribute('placeholder', 'Enter your password');
-    form.appendChild(passwordInput);
-
-    // Create login button
-    const loginButton = document.createElement('button');
-    loginButton.setAttribute('type', 'submit');
-    loginButton.textContent = 'Login';
-    form.appendChild(loginButton);
-
-    // Append the form to the container
-    formContainer.appendChild(form);
-
-    // Add event listener for form submission
-    form.addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent default form submission
-
-        // Get the values of the input fields
-        const email = emailInput.value.trim();
-        const password = passwordInput.value.trim();
-
-        // Validate input fields
-        if (!email || !password) {
-            if (!email) {
-                highlightField(emailInput); // Highlight empty email field
-            }
-            if (!password) {
-                highlightField(passwordInput); // Highlight empty password field
-            }
-            alert('Please fill in all fields.'); // Alert user
-            return; // Exit the function
-        }
-
-        // Alert the email and password values
-        alert(`Email: ${email}\nPassword: ${password}`);
+// Update bill preview table
+function updateProductTable() {
+    const tbody = document.getElementById('invoiceBody');
+    tbody.innerHTML = '';
+    
+    products.forEach((product, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${product.name}</td>
+            <td>${product.quantity}</td>
+            <td>$${product.price.toFixed(2)}</td>
+            <td>$${(product.quantity * product.price).toFixed(2)}</td>
+        `;
+        tbody.appendChild(row);
     });
+    
+    calculateTotals();
+}
 
-    // Add input event listeners to remove highlight on user input
-    emailInput.addEventListener('input', function() {
-        removeHighlight(emailInput);
-    });
+// Calculate subtotal and total
+function calculateTotals() {
+    const subtotal = products.reduce((sum, product) => 
+        sum + (product.quantity * product.price), 0);
+    
+    document.getElementById('subtotal').textContent = subtotal.toFixed(2);
+    document.getElementById('totalAmount').textContent = subtotal.toFixed(2);
+}
 
-    passwordInput.addEventListener('input', function() {
-        removeHighlight(passwordInput);
+// Generate complete bill
+function generateBill() {
+    currentBill = {
+        transactionId: generateTransactionId(),
+        date: new Date().toLocaleDateString(),
+        buyer: {
+            name: document.getElementById('buyerName').value,
+            address: document.getElementById('buyerAddress').value,
+            phone: document.getElementById('buyerPhone').value,
+            email: document.getElementById('buyerEmail').value
+        },
+        products: [...products],
+        subtotal: parseFloat(document.getElementById('subtotal').textContent),
+        total: parseFloat(document.getElementById('totalAmount').textContent)
+    };
+
+    updatePreviewDetails();
+}
+
+// Update preview section with current data
+function updatePreviewDetails() {
+    document.getElementById('previewName').textContent = currentBill.buyer.name;
+    document.getElementById('previewAddress').textContent = currentBill.buyer.address;
+    document.getElementById('previewContact').textContent = 
+        `${currentBill.buyer.phone} | ${currentBill.buyer.email}`;
+    
+    document.getElementById('transactionId').textContent = currentBill.transactionId;
+    document.getElementById('transactionDate').textContent = currentBill.date;
+}
+
+// Save bill to localStorage
+function saveBill() {
+    const bills = JSON.parse(localStorage.getItem('bills')) || [];
+    bills.push(currentBill);
+    localStorage.setItem('bills', JSON.stringify(bills));
+    alert('Bill saved successfully!');
+}
+
+// Search functionality
+document.getElementById('searchInput').addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toUpperCase();
+    const bills = JSON.parse(localStorage.getItem('bills')) || [];
+    
+    const foundBill = bills.find(bill => 
+        bill.transactionId.toUpperCase().includes(searchTerm)
+    );
+    
+    if (foundBill) {
+        currentBill = foundBill;
+        products = foundBill.products;
+        updatePreviewDetails();
+        updateProductTable();
+    }
+});
+function generateBill() {
+    currentBill = {
+        transactionId: generateTransactionId(),
+        date: new Date().toLocaleDateString(),
+        paymentMethod: document.getElementById('paymentMethod').value, // Get selected payment method
+        buyer: {
+            name: document.getElementById('buyerName').value,
+            address: document.getElementById('buyerAddress').value,
+            phone: document.getElementById('buyerPhone').value,
+            email: document.getElementById('buyerEmail').value
+        },
+        products: [...products],
+        subtotal: parseFloat(document.getElementById('subtotal').textContent),
+        total: parseFloat(document.getElementById('totalAmount').textContent)
+    };
+
+    updatePreviewDetails();
+}
+
+// Update preview section with current data
+function updatePreviewDetails() {
+    document.getElementById('previewName').textContent = currentBill.buyer.name;
+    document.getElementById('previewAddress').textContent = currentBill.buyer.address;
+    document.getElementById('previewContact').textContent = 
+        `${currentBill.buyer.phone} | ${currentBill.buyer.email}`;
+    
+    document.getElementById('transactionId').textContent = currentBill.transactionId;
+    document.getElementById('transactionDate').textContent = currentBill.date;
+    document.getElementById('paymentMethodDisplay').textContent = currentBill.paymentMethod; // Display payment method
+}
+
+// Export to PDF
+function exportPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    doc.html(document.getElementById('invoicePreview'), {
+        callback: function(doc) {
+            doc.save(`invoice_${currentBill.transactionId}.pdf`);
+        },
+        margin: [10, 10, 10, 10],
+        autoPaging: 'text'
     });
 }
 
-// Function to highlight empty fields
-function highlightField(field) {
-    field.style.borderColor = 'red'; // Change border color to red
+// Toggle dark mode
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    
+    // Save preference to localStorage
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    localStorage.setItem('darkMode', isDarkMode);
 }
 
-// Function to remove highlight from fields
-function removeHighlight(field) {
-    field.style.borderColor = '#ccc'; // Reset border color
+// Check saved preference on page load
+function initializeTheme() {
+    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+    if (savedDarkMode) {
+        document.body.classList.add('dark-mode');
+    }
 }
 
-// Call the function to create the login form
-createLoginForm();
+// Call initializeTheme when page loads
+window.addEventListener('load', initializeTheme);
+
+
+// Helper functions
+function clearProductInputs() {
+    document.getElementById('productName').value = '';
+    document.getElementById('productQty').value = '';
+    document.getElementById('productPrice').value = '';
+}
+
+function printInvoice() {
+    window.print();
+}
+
+// Initialize default transaction ID
+document.getElementById('transactionId').textContent = generateTransactionId();

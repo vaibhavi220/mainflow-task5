@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice Generator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Input Section -->
+        <div class="input-section">
+            <h2>Bill Generator</h2>
+            
+            <div class="form-group">
+                <label>Buyer Details:</label>
+                <input type="text" id="buyerName" placeholder="Name">
+                <input type="text" id="buyerAddress" placeholder="Address">
+                <input type="tel" id="buyerPhone" placeholder="Phone">
+                <input type="email" id="buyerEmail" placeholder="Email">
+            </div>
+
+            <div class="form-group">
+                <label>Add Products:</label>
+                <input type="text" id="productName" placeholder="Product Name">
+                <input type="number" id="productQty" placeholder="Qty" min="1">
+                <input type="number" id="productPrice" placeholder="Price" step="0.01">
+                <button onclick="addProduct()">Add Product</button>
+            </div>
+
+            <div class="form-group">
+                <label>Payment Method:</label>
+                <select id="paymentMethod">
+                    <option value="Cash">Cash</option>
+                    <option value="Card">Card</option>
+                    <option value="UPI">UPI</option>
+                </select>
+            </div>
+
+            <div class="controls">
+                <button onclick="generateBill()">Generate Bill</button>
+                <button onclick="saveBill()">Save Bill</button>
+                <input type="text" id="searchInput" placeholder="Search by Transaction ID">
+            </div>
+        </div>
+
+        <!-- Bill Preview -->
+        <div class="invoice-preview" id="invoicePreview">
+            <div class="invoice-header">
+                <div class="company-info">
+                    <h2>Your Company Name</h2>
+                    <p>123 Business Street<br>City, Country</p>
+                </div>
+                <div class="buyer-info">
+                    <h3>Bill To:</h3>
+                    <p id="previewName"></p>
+                    <p id="previewAddress"></p>
+                    <p id="previewContact"></p>
+                </div>
+            </div>
+
+            <table id="invoiceTable">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody id="invoiceBody"></tbody>
+            </table>
+
+            <div class="invoice-footer">
+                <div class="total-section">
+                    <p>Subtotal: Rs<span id="subtotal">0.00</span></p>
+                    <p class="total-amount">Total Due: Rs<span id="totalAmount">0.00</span></p>
+                </div>
+                <div class="transaction-info">
+                    <p>Transaction ID: <span id="transactionId"></span></p>
+                    <p>Date: <span id="transactionDate"></span></p>
+                    <p>Payment Method: <span id="paymentMethodDisplay"></span></p>
+                </div>
+            </div>
+
+            <div class="bill-controls">
+                <button onclick="printInvoice()">Print</button>
+                <button onclick="exportPDF()">Export PDF</button>
+                <button onclick="toggleDarkMode()">Dark Mode</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
