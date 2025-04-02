@@ -1,0 +1,76 @@
+/* General body styles */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full height of the viewport */
+    background-color: #f0f0f0; /* Light gray background */
+    font-family: Arial, sans-serif; /* Font style */
+    margin: 0; /* Remove default margin */
+}
+
+/* Container for the form */
+#form-container {
+    background-color: white; /* White background for the form */
+    padding: 30px; /* Padding around the form */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    width: 90%; /* Responsive width */
+    max-width: 400px; /* Maximum width for larger screens */
+}
+
+/* Form styles */
+form {
+    display: flex; /* Use flexbox for layout */
+    flex-direction: column; /* Stack elements vertically */
+}
+
+/* Label styles */
+label {
+    margin: 10px 0 5px; /* Spacing around labels */
+    font-weight: bold; /* Bold text for labels */
+}
+
+/* Input field styles */
+input {
+    padding: 12px; /* Padding inside input fields */
+    border: 1px solid #ccc; /* Light gray border */
+    border-radius: 5px; /* Rounded corners */
+    margin-bottom: 15px; /* Space below input fields */
+    background-color: #f9f9f9; /* Light background for input fields */
+    transition: border-color 0.3s; /* Smooth transition for border color */
+}
+
+/* Input field focus effect */
+input:focus {
+    border-color: #007bff; /* Change border color on focus */
+    outline: none; /* Remove default outline */
+}
+
+/* Button styles */
+button {
+    padding: 12px; /* Padding inside the button */
+    background-color: #007bff; /* Blue background color */
+    color: white; /* White text color */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 16px; /* Font size */
+    transition: background-color 0.3s; /* Smooth transition for background color */
+}
+
+/* Button hover effect */
+button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Responsive design for mobile */
+@media (max-width: 600px) {
+    #form-container {
+        padding: 20px; /* Adjust padding for smaller screens */
+    }
+
+    button {
+        font-size: 14px; /* Smaller font size for buttons on mobile */
+    }
+}
